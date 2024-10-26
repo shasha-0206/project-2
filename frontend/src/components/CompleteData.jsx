@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react';
-import { getallData } from '../api';
+import { getallData } from '../api'; // Ensure this uses the new backend URL if it fetches from the backend
 import { gsap } from 'gsap';
 import React from 'react';
 import axios from 'axios';
@@ -8,14 +8,14 @@ const CompleteData = () => {
   const [allData, setAllData] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [editMode, setEditMode] = useState(false); // New state to control edit mode
-  const [inputValue, setInputValue] = useState(''); // To hold new input data
-  const buttonRef = useRef(null); // Ref for the button container
+  const [editMode, setEditMode] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const buttonRef = useRef(null);
 
   useEffect(() => {
     const fetchAllData = async () => {
       try {
-        const result = await getallData();
+        const result = await getallData(); // Ensure this is updated in api.js
         const formattedData = result.map(item => ({
           ...item,
           createdAt: new Date(item.createdAt),
@@ -29,68 +29,55 @@ const CompleteData = () => {
     fetchAllData();
   }, []);
 
-  // for dropdown animations
   useEffect(() => {
     if (showDropdown && buttonRef.current) {
-      // Animate dropdown appearing when it's rendered
       gsap.fromTo(buttonRef.current, { height: 0 }, { height: 'auto', duration: 0.3 });
     }
   }, [showDropdown]);
 
   const handleRowClick = (item) => {
     if (selectedItem && selectedItem._id === item._id) {
-      // If the same row is clicked, hide dropdown with animation
       gsap.to(buttonRef.current, { height: 0, duration: 0.3, onComplete: () => {
-        setShowDropdown(false); // Hide dropdown after animation
-        setSelectedItem(null); // Deselect item
+        setShowDropdown(false);
+        setSelectedItem(null);
       }});
-
     } else {
-      // Show dropdown with animation
       setSelectedItem(item);
       setShowDropdown(true);
-      setEditMode(false); // Exit edit mode if switching between items
+      setEditMode(false);
     }
   };
 
-  // Enter edit mode
   const handleEdit = (item) => {
-    setEditMode(true); // Enable edit mode
-    setInputValue(item.data); // Pre-fill input with current data
+    setEditMode(true);
+    setInputValue(item.data);
   };
 
-  // Save the edited value
   const handleSave = async (item) => {
     try {
-      const response = await axios.put(`http://localhost:3000/edit/${item.number}`, { data: inputValue });
-      // Update UI with new data
-      setAllData(prevData =>
-        prevData.map(d => d._id === item._id ? { ...d, data: inputValue } : d)
-      );
-      
-      setEditMode(false); // Exit edit mode after saving
-      setShowDropdown(false); // Optionally hide the dropdown
+      const response = await axios.put(`https://project-2-4k65.onrender.com/edit/${item.number}`, { data: inputValue });
+      setAllData(prevData => prevData.map(d => d._id === item._id ? { ...d, data: inputValue } : d));
+      setEditMode(false);
+      setShowDropdown(false);
     } catch (error) {
       console.error('Error editing item:', error.message);
     }
   };
 
-  // for deleting
   const handleDelete = async (item) => {
     try {
-        const response = await axios.delete(`http://localhost:3000/delete/${item.number}`);
+      const response = await axios.delete(`https://project-2-4k65.onrender.com/delete/${item.number}`);
 
-        if (response.status === 200) {
-            setAllData(allData.filter(data => data._id !== item._id)); // Update state
-        }
+      if (response.status === 200) {
+          setAllData(allData.filter(data => data._id !== item._id));
+      }
     } catch (error) {
-        console.error('Error deleting item:', error.message);
+      console.error('Error deleting item:', error.message);
     }
   };
 
   return (
     <>
-      {/* Table to Display All Data */}
       <table className="table table-hover">
         <thead>
           <tr>
@@ -104,17 +91,13 @@ const CompleteData = () => {
           {allData.map((item, index) => (
             item.number && item.data ? (
               <React.Fragment key={item._id}>
-                <tr
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => handleRowClick(item)} // Add onClick event
-                >
+                <tr style={{ cursor: 'pointer' }} onClick={() => handleRowClick(item)}>
                   <th scope="row">{index + 1}</th>
                   <td>{item.number}</td>
                   <td style={{ wordBreak: 'break-word' }}>{item.data}</td>
                   <td>{item.createdAt.toLocaleDateString()}</td>
                 </tr>
 
-                {/* Render dropdown container under the row */}
                 {showDropdown && selectedItem && selectedItem._id === item._id && (
                   <tr>
                     <td colSpan="4">

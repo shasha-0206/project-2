@@ -1,15 +1,16 @@
 import axios from 'axios';
-const API_URL = 'https://project-2-4k65.onrender.com'; // Your backend URL
-// const API_URL = 'http://localhost:3000'; // Your backend URL
 
+const API_URL = 'https://project-2-4k65.onrender.com';
 
 export const addID = async (id, data) => {
-  try {
-    const response = await axios.post(`${API_URL}/add`, { number: id, data });
-    return response.data; // Returns the success message
-  } catch (error) {
-    throw new Error(error.response.data.message || 'Error adding ID');
-  }
+    try {
+        const response = await axios.post(`${API_URL}/add`, { id, data });
+        return response.data; // Assuming the backend returns some data
+    } catch (error) {
+        // Log the full error response for better debugging
+        console.error('Error adding ID:', error.response ? error.response.data : error.message);
+        throw new Error(error.response ? error.response.data.message : 'Error adding ID');
+    }
 };
 
 export const searchID = async (id) => {

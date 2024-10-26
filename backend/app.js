@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 
 dotenv.config();
 const app = express();
-const PORT =  process.env.PORT || 3000;
+const PORT =  process.env.PORT_URL ;
 
 // Middleware
 app.use(express.json());
@@ -91,8 +91,18 @@ app.put('/edit/:id', async (req, res) => {
     const { id } = req.params; // Get the ID from the request parameters
     const { data } = req.body; // Extract the new data from request body
 
+    // Check if data is provided
+    if (!data) {
+        return res.status(400).json({ message: 'Data cannot be empty!' });
+    }
+
     try {
-        const editItem = await ID.findOneAndUpdate(); 
+        // Update the item in MongoDB
+        const editItem = await ID.findOneAndUpdate(
+            { number: id },           // Query to find the item
+            { data: data },          // New data to update
+            { new: true, runValidators: true } // Options: return the updated document and run validators
+        );
 
         if (editItem) {
             return res.status(200).json({ message: 'Item updated successfully!', updatedItem: editItem });
@@ -105,6 +115,7 @@ app.put('/edit/:id', async (req, res) => {
 });
 
 
+
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on ${PORT}`);
 });
