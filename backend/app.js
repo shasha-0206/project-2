@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 
 dotenv.config();
 const app = express();
-const PORT =  process.env.PORT_URL ;
+const PORT = 3000;
 
 // Middleware
 app.use(express.json());
@@ -23,8 +23,9 @@ mongoose.connect(DB_URL)
 app.post('/add', async (req, res) => {
     const { number, data } = req.body;
     
-    if (!data) {
-        return res.status(400).json({ message: 'Data cannot be empty!' });
+    if (data === '') {
+        alert('Data cannot be empty!');
+        return;
     }
 
     // for adding data to mongo
@@ -91,18 +92,12 @@ app.put('/edit/:id', async (req, res) => {
     const { id } = req.params; // Get the ID from the request parameters
     const { data } = req.body; // Extract the new data from request body
 
-    // Check if data is provided
-    if (!data) {
-        return res.status(400).json({ message: 'Data cannot be empty!' });
-    }
-
     try {
-        // Update the item in MongoDB
         const editItem = await ID.findOneAndUpdate(
-            { number: id },           // Query to find the item
-            { data: data },          // New data to update
-            { new: true, runValidators: true } // Options: return the updated document and run validators
-        );
+            { number: id }, // Find the item by number (assuming unique identifier)
+            { data },       // Update with new data
+            { new: true }   // Return the updated document
+        ); 
 
         if (editItem) {
             return res.status(200).json({ message: 'Item updated successfully!', updatedItem: editItem });
@@ -115,7 +110,6 @@ app.put('/edit/:id', async (req, res) => {
 });
 
 
-
 app.listen(PORT, () => {
-    console.log(`Server running on ${PORT}`);
+    console.log(`Server running on http://localhost:${PORT}`);
 });
