@@ -63,8 +63,6 @@ const CompleteData = () => {
   const handleSave = async (item) => {
     try {
       const response = await axios.put(`http://localhost:3000/edit/${item.number}`, { data: inputValue });
-      console.log('Item edited successfully:', response.data);
-
       // Update UI with new data
       setAllData(prevData =>
         prevData.map(d => d._id === item._id ? { ...d, data: inputValue } : d)

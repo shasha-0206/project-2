@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 
 dotenv.config();
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT =  process.env.PORT || 3000;
 
 // Middleware
 app.use(express.json());
@@ -22,14 +22,9 @@ mongoose.connect(DB_URL)
 // Route to Add ID
 app.post('/add', async (req, res) => {
     const { number, data } = req.body;
-
-    // if (number.length !== 10) {
-    //     return res.status(400).json({ message: 'ID must be exactly 10 digits!' });
-    // }
     
-    if (data === '') {
-        alert('Data cannot be empty!');
-        return;
+    if (!data) {
+        return res.status(400).json({ message: 'Data cannot be empty!' });
     }
 
     // for adding data to mongo
@@ -97,11 +92,7 @@ app.put('/edit/:id', async (req, res) => {
     const { data } = req.body; // Extract the new data from request body
 
     try {
-        const editItem = await ID.findOneAndUpdate(
-            { number: id }, // Find the item by number (assuming unique identifier)
-            { data },       // Update with new data
-            { new: true }   // Return the updated document
-        ); 
+        const editItem = await ID.findOneAndUpdate(); 
 
         if (editItem) {
             return res.status(200).json({ message: 'Item updated successfully!', updatedItem: editItem });

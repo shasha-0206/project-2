@@ -1,6 +1,7 @@
-// src/api.js
 import axios from 'axios';
 const API_URL = 'https://project-2-4k65.onrender.com'; // Your backend URL
+// const API_URL = 'http://localhost:3000'; // Your backend URL
+
 
 export const addID = async (id, data) => {
   try {
