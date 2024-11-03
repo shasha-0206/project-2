@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000'; // Your backend URL
+const API_URL = 'https://project-2-backend-7cns.onrender.com'; //  backend URL
 
 
 export const addID = async (id, data) => {
