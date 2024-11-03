@@ -62,7 +62,7 @@ const CompleteData = () => {
   // Save the edited value
   const handleSave = async (item) => {
     try {
-      const response = await axios.put(`http://localhost:3000/edit/${item.number}`, { data: inputValue });
+      const response = await axios.put(`https://project-2-backend-7cns.onrender.com/edit/${item.number}`, { data: inputValue });
       console.log('Item edited successfully:', response.data);
 
       // Update UI with new data
@@ -80,7 +80,7 @@ const CompleteData = () => {
   // for deleting
   const handleDelete = async (item) => {
     try {
-        const response = await axios.delete(`http://localhost:3000/delete/${item.number}`);
+        const response = await axios.delete(`https://project-2-backend-7cns.onrender.com/delete/${item.number}`);
 
         if (response.status === 200) {
             setAllData(allData.filter(data => data._id !== item._id)); // Update state
